@@ -81,7 +81,7 @@ export class AppComponent implements OnInit {
       this.randomPeerId = randomPeer.id;
 
       const title = 'Randomly unchocked peer';
-      const description = this.randomPeerId;
+      const description = randomPeer.ip;
 
       this.addMessage(title, description);
     }, 3000);
