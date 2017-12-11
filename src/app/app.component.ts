@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import Peer from '../models/Peer';
+import { race } from 'q';
 
 @Component({
   selector: 'app-root',
@@ -7,14 +8,17 @@ import Peer from '../models/Peer';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  private size = 20;
+  private size = 10;
   user: Peer;
   peers: Peer[];
   choked: Peer[] = [];
+  messages: any[] = [];
   event: any = {};
+  randomPeerId: string;
 
   fastestInterval = null;
   randomInterval = null;
+  updatePeersInterval = null;
 
   constructor() {
     this.event.title = '';
@@ -33,55 +37,89 @@ export class AppComponent implements OnInit {
 
   start(): void {
     this.fastestInterval = setInterval(() => {
-
-      this.peers = this.peers.sort((first, second) => {
-        return first.speed - second.speed;
+      this.peers.map(peer => {
+        if (peer.id !== this.randomPeerId) {
+          peer.chocked = false;
+        }
       });
 
-      this.choked = [...this.peers.slice(0, 3)];
+      this.peers = this.peers.sort((first, second) => {
+        return second.speed - first.speed;
+      });
 
-      this.updateEvent('3 fastest', [...this.choked.map(chokedPeer => chokedPeer.id)].toString());
+      this.peers.slice(0, 3).forEach(peer => peer.chocked = true);
+
+      const title = 'Sorted peers';
+      let description = '3 fastests: ';
+
+      const ips = this.peers.slice(0, 3).map(peer => peer.ip);
+
+      ips.forEach((id, idx) => {
+        description += id;
+        if (idx !== ips.length - 1) {
+          description += ', ';
+        }
+      });
+
+      this.addMessage(title, description);
 
     }, 1000);
 
     this.randomInterval = setInterval(() => {
 
-      let randomPeer = this.peers[Math.floor(Math.random() * this.peers.length)];
+      if (this.randomPeerId) {
+        this.peers.forEach(peer => {
+          if (peer.id === this.randomPeerId) {
+            peer.chocked = false;
+          }
+        });
+      }
 
-      
-      this.choked.push(randomPeer);
+      const randomPeer = this.peers[Math.floor(Math.random() * (this.peers.length - 3) + 3)];
+      randomPeer.chocked = true;
 
-      this.updateEvent('Random', randomPeer.id);
+      this.randomPeerId = randomPeer.id;
 
     }, 3000);
+
+    this.updatePeersInterval = setInterval(() => {
+      const deletePeersNumber = Math.floor(Math.random() * 5);
+
+      for (let i = 0; i < deletePeersNumber; i++) {
+        const idx = Math.floor(Math.random() * this.peers.length);
+        this.peers.splice(0, 1);
+        this.peers.push(this.generateRandomPeer());
+      }
+    }, 5000);
   }
 
   stop(): void {
     clearInterval(this.fastestInterval);
     clearInterval(this.randomInterval);
+    clearInterval(this.updatePeersInterval);
   }
 
-  isInChoked(peer: Peer): boolean {
-    return this.choked.filter(chokedPeer => chokedPeer.id === peer.id).length > 0;
-  };
-
-  updateEvent(title: string, description: string) {
-    this.event.title = title;
-    this.event.description = description;
-  };
+  addMessage(header: string, description: string) {
+    this.messages.push({
+      header: header,
+      description: description
+    });
+  }
 
   generateRandomPeer(): Peer {
     return new Peer(
       this.generateRandomId(),
       this.generateRandomSpeed(),
       this.generateRandomIp(),
-      this.generateRandomPort()
+      this.generateRandomPort(),
+      false,
+      false
     );
   }
 
   generateRandomPort(): number {
     return Math.floor(Math.random() * (8000) + 1000);
-  };
+  }
 
   generateRandomIp(): string {
     let ip = '';
@@ -94,10 +132,10 @@ export class AppComponent implements OnInit {
     }
 
     return ip;
-  };
+  }
 
   generateRandomSpeed(): number {
-    return Math.floor(Math.random() * 9 + 1);
+    return parseFloat((Math.random() * 9 + 1).toFixed(2));
   }
 
   generateRandomId(): string {

@@ -23,37 +23,45 @@
       </div>
     </div>
 
-    <div class="six wide column" style="height: 450px; overflow: auto">
+    <div class="three wide column" style="height: 450px; overflow: auto">
 
       <div class="ui list">
-        <div class="item" *ngFor="let peer of peers" [ngClass]="{'choked': isInChoked(peer)}">
+        <div class="item" *ngFor="let peer of peers">
           <img class="ui avatar image" src="/assets/peer.png">
           <div class="content">
             <a class="header">{{peer.speed}} mb/s</a>
             <div class="description">
               {{peer.ip}}
+
+              <a class="ui teal tag label mini" *ngIf="peer.chocked; else blocked">Разблокирован</a>
+
+              <ng-template #blocked>
+                <a class="ui red tag label mini">Заблокирован</a>
+              </ng-template>
+
             </div>
           </div>
         </div>
       </div>
 
     </div>
+
+    <div class="three wide column" style="height: 450px; overflow: auto">
+      <div class="ui message" *ngFor="let message of messages">
+        <i class="close icon"></i>
+        <div class="header">
+          {{message.header}}
+        </div>
+        <p>{{message.description}}</p>
+      </div>
+    </div>
   </div>
 
-  <div class="ui grid">
+  <div class="ui grid centered">
     <div class="six wide column">
       <div class="ui button teal" (click)="start()">Start</div>
       <div class="ui button red" (click)="stop()">Stop</div>
     </div>
-
-    <div class="six wide column">
-      <div class="ui message transition hidden">
-        <i class="close icon"></i>
-        <div class="header">
-          {{event.title}}
-        </div>
-        <p>{{event.description}}</p>
-      </div>
-    </div>
+    <div class="six wide column"></div>
   </div>
 </div>
