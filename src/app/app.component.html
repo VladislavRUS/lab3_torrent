@@ -1,6 +1,6 @@
 <div class="ui segment" style="position: absolute; left: 20px; right: 20px; top: 20px">
   <div class="ui grid centered">
-    <div class="six wide column">
+    <div class="four wide column">
       <div class="ui card">
         <div class="image">
           <img src="/assets/person-flat.png">
@@ -23,7 +23,7 @@
       </div>
     </div>
 
-    <div class="three wide column" style="height: 450px; overflow: auto">
+    <div class="four wide column">
 
       <div class="ui list">
         <div class="item" *ngFor="let peer of peers">
@@ -33,10 +33,10 @@
             <div class="description">
               {{peer.ip}}
 
-              <a class="ui teal tag label mini" *ngIf="peer.chocked; else blocked">Разблокирован</a>
+              <a class="ui teal tag label mini" *ngIf="peer.unchocked; else blocked">Unchocked</a>
 
               <ng-template #blocked>
-                <a class="ui red tag label mini">Заблокирован</a>
+                <a class="ui red tag label mini">Chocked</a>
               </ng-template>
 
             </div>
@@ -46,8 +46,8 @@
 
     </div>
 
-    <div class="three wide column" style="height: 450px; overflow: auto">
-      <div class="ui message" *ngFor="let message of messages">
+    <div class="four wide column" style="height: 450px; overflow: auto">
+      <div class="ui message small" *ngFor="let message of messages">
         <i class="close icon"></i>
         <div class="header">
           {{message.header}}

@@ -5,7 +5,7 @@ class Peer {
         public speed: number,
         public ip: string,
         public port: number,
-        public chocked: boolean,
+        public unchocked: boolean,
         public interested: boolean
     ) { }
 

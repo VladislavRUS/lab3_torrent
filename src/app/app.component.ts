@@ -39,7 +39,7 @@ export class AppComponent implements OnInit {
     this.fastestInterval = setInterval(() => {
       this.peers.map(peer => {
         if (peer.id !== this.randomPeerId) {
-          peer.chocked = false;
+          peer.unchocked = false;
         }
       });
 
@@ -47,7 +47,7 @@ export class AppComponent implements OnInit {
         return second.speed - first.speed;
       });
 
-      this.peers.slice(0, 3).forEach(peer => peer.chocked = true);
+      this.peers.slice(0, 3).forEach(peer => peer.unchocked = true);
 
       const title = 'Sorted peers';
       let description = '3 fastests: ';
@@ -70,16 +70,20 @@ export class AppComponent implements OnInit {
       if (this.randomPeerId) {
         this.peers.forEach(peer => {
           if (peer.id === this.randomPeerId) {
-            peer.chocked = false;
+            peer.unchocked = false;
           }
         });
       }
 
       const randomPeer = this.peers[Math.floor(Math.random() * (this.peers.length - 3) + 3)];
-      randomPeer.chocked = true;
+      randomPeer.unchocked = true;
 
       this.randomPeerId = randomPeer.id;
 
+      const title = 'Randomly unchocked peer';
+      const description = this.randomPeerId;
+
+      this.addMessage(title, description);
     }, 3000);
 
     this.updatePeersInterval = setInterval(() => {
@@ -90,6 +94,11 @@ export class AppComponent implements OnInit {
         this.peers.splice(0, 1);
         this.peers.push(this.generateRandomPeer());
       }
+
+      const title = 'New peers';
+      const description = deletePeersNumber.toString();
+
+      this.addMessage(title, description);
     }, 5000);
   }
 
