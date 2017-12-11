@@ -1,3 +1,5 @@
+import Fragment from './Fragment';
+
 class Peer {
 
     constructor(
@@ -6,7 +8,8 @@ class Peer {
         public ip: string,
         public port: number,
         public unchocked: boolean,
-        public interested: boolean
+        public interested: boolean,
+        public fragments: Fragment[] = []
     ) { }
 
 }

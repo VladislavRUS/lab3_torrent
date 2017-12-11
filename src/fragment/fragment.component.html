@@ -1,0 +1,70 @@
+<div class="ui segment">
+
+  <div class="ui grid">
+    <div class="twelve width column">
+      <div class="ui ordered steps">
+        <a class="step" (click)="user.fragments.length < 4 && step()" [ngClass]="{'completed': user.fragments.length >= 4}">
+          <div class="content">
+            <div class="title">Random first</div>
+            <div class="description">4 random fragments</div>
+          </div>
+        </a>
+        <a class="step" (click)="step()" [ngClass]="{'completed': endGameStarted}" *ngIf="user.fragments.length >= 4">
+          <div class="content">
+            <div class="title">Rarest first</div>
+            <div class="description">Load most rarest fragments</div>
+          </div>
+        </a>
+        <a class="step" (click)="startEndGame()" [ngClass]="{'completed': user.fragments.length === fragments.length}" *ngIf="endGameStarted">
+          <div class="content">
+            <div class="title">End game</div>
+            <div class="description">Load last blocks</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="ui grid">
+    <div class="twelve width column">
+      <table class="ui celled structured table compact">
+        <thead>
+          <tr>
+            <th>IP</th>
+            <th>Port</th>
+            <th>Speed, mb/s</th>
+            <th *ngFor="let fragment of fragments; let idx = index">
+              {{idx + 1}}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let peer of peers">
+            <td>
+
+              <div class="ui indicating progress tiny" id={{peer.id}} *ngIf="inEndGame(peer)">
+                <div class="bar"></div>
+              </div>
+
+              {{peer.ip}}
+
+            </td>
+            <td>{{peer.port}}</td>
+            <td>{{peer.speed}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td *ngFor="let fragment of fragments" [ngClass]="{'active': fragment.params.ip === peer.ip || fragment.params.rarest === true}">
+              <i class="small green checkmark icon" *ngIf="hasFragment(peer, fragment)"></i>
+            </td>
+          </tr>
+          <tr class="active">
+            <td>{{user.ip}}</td>
+            <td>{{user.port}}</td>
+            <td>{{user.speed}}</td>
+            <td *ngFor="let fragment of fragments">
+              <i class="small green checkmark icon" *ngIf="hasFragment(user, fragment)"></i>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
